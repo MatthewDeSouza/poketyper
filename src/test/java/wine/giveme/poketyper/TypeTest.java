@@ -8,38 +8,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 class TypeTest {
-    private final Type type1 = new Type("Bug", "Dark");
-    private final Type type2 = new Type("Dragon", "Electric");
-    private final Type type3 = new Type("Fairy", "Fighting");
-    private final Type type4 = new Type("Fire", "Flying");
-    private final Type type5 = new Type("Ghost", "Grass");
-    private final Type type6 = new Type("Ground", "Ice");
-    private final Type type7 = new Type("Normal", "Poison");
-    private final Type type8 = new Type("Psychic", "Rock");
-    private final Type type9 = new Type("Steel", "Water");
+    private final Type type1 = new Type(Type.Types.BUG, Type.Types.DARK);
+    private final Type type2 = new Type(Type.Types.DRAGON, Type.Types.ELECTRIC);
+    private final Type type3 = new Type(Type.Types.FAIRY, Type.Types.FIGHTING);
+    private final Type type4 = new Type(Type.Types.FIRE, Type.Types.FLYING);
+    private final Type type5 = new Type(Type.Types.GHOST, Type.Types.GRASS);
+    private final Type type6 = new Type(Type.Types.GROUND, Type.Types.ICE);
+    private final Type type7 = new Type(Type.Types.NORMAL, Type.Types.POISON);
+    private final Type type8 = new Type(Type.Types.PSYCHIC, Type.Types.ROCK);
+    private final Type type9 = new Type(Type.Types.STEEL, Type.Types.WATER);
 
-    private final Type type10 = new Type("Bug");
-    private final Type type11 = new Type("Dark");
-    private final Type type12 = new Type("Dragon");
-    private final Type type13 = new Type("Electric");
-    private final Type type14 = new Type("Fairy");
-    private final Type type15 = new Type("Fighting");
-    private final Type type16 = new Type("Fire");
-    private final Type type17 = new Type("Flying");
-    private final Type type18 = new Type("Ghost");
-    private final Type type19 = new Type("Grass");
-    private final Type type20 = new Type("Ground");
-    private final Type type21 = new Type("Ice");
-    private final Type type22 = new Type("Normal");
-    private final Type type23 = new Type("Poison");
-    private final Type type24 = new Type("Psychic");
-    private final Type type25 = new Type("Rock");
-    private final Type type26 = new Type("Steel");
-    private final Type type27 = new Type("Water");
+    private final Type type10 = new Type(Type.Types.BUG);
+    private final Type type11 = new Type(Type.Types.DARK);
+    private final Type type12 = new Type(Type.Types.DRAGON);
+    private final Type type13 = new Type(Type.Types.ELECTRIC);
+    private final Type type14 = new Type(Type.Types.FAIRY);
+    private final Type type15 = new Type(Type.Types.FIGHTING);
+    private final Type type16 = new Type(Type.Types.FIRE);
+    private final Type type17 = new Type(Type.Types.FLYING);
+    private final Type type18 = new Type(Type.Types.GHOST);
+    private final Type type19 = new Type(Type.Types.GRASS);
+    private final Type type20 = new Type(Type.Types.GROUND);
+    private final Type type21 = new Type(Type.Types.ICE);
+    private final Type type22 = new Type(Type.Types.NORMAL);
+    private final Type type23 = new Type(Type.Types.POISON);
+    private final Type type24 = new Type(Type.Types.PSYCHIC);
+    private final Type type25 = new Type(Type.Types.ROCK);
+    private final Type type26 = new Type(Type.Types.STEEL);
+    private final Type type27 = new Type(Type.Types.WATER);
 
     @Test
     void testSingleTypeGetName() {
@@ -1079,11 +1078,5 @@ class TypeTest {
         test.put("Steel", 0.25);
         test.put("Water", 0.5);
         assertEquals(test, type9.getDefensiveTypeValues());
-    }
-
-    @Test
-    void testGetOffensiveDualTypeValuesThrowsIllegalAccessError() {
-        IllegalAccessError exception = assertThrows(IllegalAccessError.class, type1::getOffensiveTypeValues);
-        assertEquals("Dual types do not have an offensive type value.", exception.getMessage());
     }
 }

@@ -8,6 +8,6 @@ module wine.giveme.poketyper {
     requires org.kordamp.ikonli.javafx;
     requires com.google.common;
     requires org.slf4j;
-    opens wine.giveme.poketyper.frontend to javafx.fxml;
+    requires reload4j;
     opens wine.giveme.poketyper.backend;
 }

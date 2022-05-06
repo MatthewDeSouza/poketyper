@@ -7,26 +7,37 @@ import java.util.Map;
 abstract class AbstractType {
     private final String description;
 
-    final Logger logger;
+    private final Map<String, Double> defensiveTypeValues;
+    private final Map<String, Double> offensiveTypeValues;
 
     AbstractType(String description) {
         this.description = description;
-        logger = org.slf4j.LoggerFactory.getLogger(getClass());
+        Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
+        defensiveTypeValues = generateDefensiveTypeValues();
+        logger.info("Generated defensive type values.");
+        offensiveTypeValues = generateOffensiveTypeValues();
+        logger.info("Generated offensive type values.");
     }
 
     // Mutators.
-    public String getName() {
+    String getName() {
         return getClass().getSimpleName();
     }
 
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
     // Static methods.
-    public abstract Map<String, Double> getDefensiveTypeValues();
+    public Map<String, Double> getDefensiveTypeValues() {
+        return defensiveTypeValues;
+    }
 
+    abstract Map<String, Double> generateDefensiveTypeValues();
+    abstract Map<String, Double> generateOffensiveTypeValues();
 
-    public abstract Map<String, Double> getOffensiveTypeValues();
+    public Map<String, Double> getOffensiveTypeValues() {
+        return offensiveTypeValues;
+    }
 
 }

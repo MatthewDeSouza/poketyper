@@ -1,130 +1,138 @@
 package wine.giveme.poketyper.backend.types;
 
+import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Type {
-    private static final String RANDOM = "Random";
-    private final String[] typesArray = {"Bug", "Dark", "Dragon", "Electric", "Fairy", "Fighting",
-            "Fire", "Flying", "Ghost", "Grass", "Ground", "Ice",
-            "Normal", "Poison", "Psychic", "Rock", "Steel", "Water"};
-    private final boolean isDualType;
-    private final AbstractType typeOne;
-    private AbstractType typeTwo;
-    private Map<String, Double> defensiveTypeValues;
-    private Map<String, Double> offensiveTypeValues;
     private static final Logger logger = LoggerFactory.getLogger(Type.class);
+    private final List<AbstractType> typeList;
 
-    public Type(String name) {
-        isDualType = false;
-        if (name.equalsIgnoreCase(RANDOM)) {
-            logger.info("Random flag set, generating random type");
-            SecureRandom rand = new SecureRandom();
-            // pick a random type
-            int randomType = rand.nextInt(typesArray.length);
-            name = typesArray[randomType];
-        } else {
-            logger.info("Creating single-type Type: {}", name);
+    private final Map<String, Double> defensiveTypeValues;
+    private final Map<String, Double> offensiveTypeValues;
+    private final String[] descriptions;
+    private final String name;
+
+    // Constructors.
+    public Type(Types... types) {
+        BasicConfigurator.configure();
+        if (types.length > 2) {
+            logger.warn("More than two types specified! Additional types might not be accessed.");
         }
-        typeOne = setType(name);
-        setTypeValues();
-    }
-
-    public Type(String nameOne, String nameTwo) {
-        logger.info("Creating new dual-type Type: {} and {}", nameOne, nameTwo);
-        isDualType = true;
-        if (nameOne.equalsIgnoreCase(RANDOM)) {
-            SecureRandom rand = new SecureRandom();
-            int randomType = rand.nextInt(typesArray.length);
-            typeOne = setType(typesArray[randomType]);
-        } else {
-            typeOne = setType(nameOne);
+        List<AbstractType> temp = new ArrayList<>(types.length);
+        for (Types type : types) {
+            temp.add(setType(type));
         }
-        if (nameTwo.equalsIgnoreCase(RANDOM)) {
-            SecureRandom rand = new SecureRandom();
-            int randomType = rand.nextInt(typesArray.length);
-            typeTwo = setType(typesArray[randomType]);
-        } else {
-            typeTwo = setType(nameTwo);
-        }
-        setTypeValues();
+        typeList = temp;
+        defensiveTypeValues = setDefensiveTypeValues();
+        offensiveTypeValues = setOffensiveTypeValues();
+        descriptions = setDescriptions();
+        name = setName();
     }
 
-    public Type() {
-        this(RANDOM);
-    }
-
-    // Static methods.
-    private static AbstractType setType(String typeString) {
-        return switch (typeString.toUpperCase()) {
-            case "BUG" -> new Bug();
-            case "DARK" -> new Dark();
-            case "DRAGON" -> new Dragon();
-            case "ELECTRIC" -> new Electric();
-            case "FAIRY" -> new Fairy();
-            case "FIGHTING" -> new Fighting();
-            case "FIRE" -> new Fire();
-            case "FLYING" -> new Flying();
-            case "GHOST" -> new Ghost();
-            case "GRASS" -> new Grass();
-            case "GROUND" -> new Ground();
-            case "ICE" -> new Ice();
-            case "NORMAL" -> new Normal();
-            case "POISON" -> new Poison();
-            case "PSYCHIC" -> new Psychic();
-            case "ROCK" -> new Rock();
-            case "STEEL" -> new Steel();
-            case "WATER" -> new Water();
-            default -> throw new IllegalArgumentException();
-        };
-    }
-
-
-    // Mutators
+    // Mutators.
     public Map<String, Double> getDefensiveTypeValues() {
         return defensiveTypeValues;
     }
 
-    public boolean isDualType() {
-        return isDualType;
-    }
-
-    // Class methods.
-    private void setTypeValues() {
-        defensiveTypeValues = new HashMap<>();
-        offensiveTypeValues = new HashMap<>();
-        if (isDualType) {
-            logger.info("Generating defensive type values for dual-type Type");
-            for (String type : typesArray) {
-                Double product = typeOne.getDefensiveTypeValues().get(type) * typeTwo.getDefensiveTypeValues().get(type);
-                defensiveTypeValues.put(type, product);
-            }
-        } else {
-            logger.info("Generating defensive type values for single-type Type");
-            defensiveTypeValues = typeOne.getDefensiveTypeValues();
-            logger.info("Generating offensive type values for single-type Type");
-            offensiveTypeValues = typeOne.getOffensiveTypeValues();
-        }
-    }
-
-    public Map<String, Double> getOffensiveTypeValues() throws IllegalAccessError {
-        if (isDualType) {
-            logger.error("Cannot get offensive type values for dual-type Type");
-            throw new IllegalAccessError("Dual types do not have an offensive type value.");
-        }
+    public Map<String, Double> getOffensiveTypeValues() {
         return offensiveTypeValues;
     }
 
-    public String[] getDescription() {
-        return (isDualType) ? new String[]{typeOne.getDescription(), typeTwo.getDescription()} :
-                new String[]{typeOne.getDescription()};
+    public String getName() {
+        return name;
     }
 
-    public String getName() {
-        return (isDualType) ? typeOne.getName() + " & " + typeTwo.getName() : typeOne.getName();
+    public String getOffensiveValueTypeName() {
+        return typeList.get(0).getName();
+    }
+
+    public String[] getDescriptions() {
+        return descriptions;
+    }
+
+    // Class methods.
+    private AbstractType setType(Types type) {
+        return switch (type) {
+            case BUG -> new Bug();
+            case DARK -> new Dark();
+            case DRAGON -> new Dragon();
+            case ELECTRIC -> new Electric();
+            case FAIRY -> new Fairy();
+            case FIGHTING -> new Fighting();
+            case FIRE -> new Fire();
+            case FLYING -> new Flying();
+            case GHOST -> new Ghost();
+            case GRASS -> new Grass();
+            case GROUND -> new Ground();
+            case ICE -> new Ice();
+            case NORMAL -> new Normal();
+            case POISON -> new Poison();
+            case PSYCHIC -> new Psychic();
+            case ROCK -> new Rock();
+            case STEEL -> new Steel();
+            case WATER -> new Water();
+            case RANDOM -> RandomType.getRandomType();
+        };
+    }
+
+    private Map<String, Double> setDefensiveTypeValues() {
+        if (typeList.size() > 1) {
+            logger.warn("More than one type specified (size {})! Returning defensive values for first two types.", typeList.size());
+            HashMap<String, Double> temp = new HashMap<>(typeList.get(0).getDefensiveTypeValues());
+
+            temp.forEach((k, v) -> {
+                Double product = v * typeList.get(1).getDefensiveTypeValues().get(k);
+                temp.put(k, product);
+            });
+            return temp;
+        }
+        return typeList.get(0).getDefensiveTypeValues();
+    }
+
+    private Map<String, Double> setOffensiveTypeValues() {
+        if (typeList.size() > 1) {
+            logger.warn("typeList has more than one type! (size {}) Returning offensive values for the first type.", typeList.size());
+        }
+        return typeList.get(0).getOffensiveTypeValues();
+    }
+
+    private String setName() {
+        if (typeList.size() > 1) {
+            logger.warn("More than one type specified! Name will be concatenated with '&'.");
+            String[] temp = new String[typeList.size()];
+            typeList.forEach(t -> temp[typeList.indexOf(t)] = t.getName());
+            StringBuilder output = new StringBuilder();
+            for (int i = 0; i < typeList.size(); i++) {
+                if (i % 2 == 1) {
+                    output.append(" & ");
+                }
+                output.append(temp[i]);
+            }
+            return output.toString();
+        }
+        return typeList.get(0).getName();
+    }
+
+    private String[] setDescriptions() {
+        if (typeList.size() == 1) {
+            logger.warn("Only one type specified! Array is of size 1.");
+            return new String[]{typeList.get(0).getDescription()};
+        }
+        String[] temp = new String[typeList.size()];
+        typeList.forEach(t -> temp[typeList.indexOf(t)] = t.getDescription());
+        return temp;
+    }
+
+    // Enum.
+    public enum Types {
+        BUG, DARK, DRAGON, ELECTRIC, FAIRY, FIGHTING,
+        FIRE, FLYING, GHOST, GRASS, GROUND, ICE,
+        NORMAL, POISON, PSYCHIC, ROCK, STEEL, WATER, RANDOM
     }
 }

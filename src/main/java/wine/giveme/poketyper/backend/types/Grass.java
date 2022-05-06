@@ -1,6 +1,7 @@
 package wine.giveme.poketyper.backend.types;
 
 import java.util.HashMap;
+import java.util.Map;
 
 class Grass extends AbstractType {
     Grass() {
@@ -12,7 +13,7 @@ class Grass extends AbstractType {
     }
 
     @Override
-    public HashMap<String, Double> getDefensiveTypeValues() {
+    Map<String, Double> generateDefensiveTypeValues() {
         HashMap<String, Double> temp = new HashMap<>();
         temp.put("Bug", 2.0);
         temp.put("Dark", 1.0);
@@ -32,12 +33,11 @@ class Grass extends AbstractType {
         temp.put("Rock", 1.0);
         temp.put("Steel", 1.0);
         temp.put("Water", 0.5);
-        logger.info("Returning defensive type values for Grass.");
         return temp;
     }
 
     @Override
-    public HashMap<String, Double> getOffensiveTypeValues() {
+    Map<String, Double> generateOffensiveTypeValues() {
         HashMap<String, Double> temp = new HashMap<>();
         temp.put("Bug", 0.5);
         temp.put("Dark", 1.0);
@@ -57,7 +57,6 @@ class Grass extends AbstractType {
         temp.put("Rock", 2.0);
         temp.put("Steel", 0.5);
         temp.put("Water", 2.0);
-        logger.info("Returning offensive type values for Grass.");
         return temp;
     }
 }
