@@ -10,9 +10,10 @@ abstract class AbstractType {
     private final Map<String, Double> defensiveTypeValues;
     private final Map<String, Double> offensiveTypeValues;
 
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(AbstractType.class.getName());
+
     AbstractType(String description) {
         this.description = description;
-        Logger logger = org.slf4j.LoggerFactory.getLogger(getClass());
         defensiveTypeValues = generateDefensiveTypeValues();
         logger.info("Generated defensive type values.");
         offensiveTypeValues = generateOffensiveTypeValues();

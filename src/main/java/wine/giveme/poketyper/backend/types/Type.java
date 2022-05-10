@@ -1,6 +1,5 @@
 package wine.giveme.poketyper.backend.types;
 
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,6 @@ public class Type {
 
     // Constructors.
     public Type(Types... types) {
-        BasicConfigurator.configure();
         if (types.length > 2) {
             logger.warn("More than two types specified! Additional types might not be accessed.");
         }
